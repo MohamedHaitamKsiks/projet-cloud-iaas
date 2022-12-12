@@ -1,0 +1,26 @@
+{
+  "name": "projet-cloud-iaas",
+  "version": "1.0.0",
+  "description": "Simple serveur node js pour un projet cloud qui consiste en la creation d'un iaas sur AWS.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "build": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MohamedHaitamKsiks/projet-cloud-iaas.git"
+  },
+  "author": "Ksiks Mohamed Haitam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MohamedHaitamKsiks/projet-cloud-iaas/issues"
+  },
+  "homepage": "https://github.com/MohamedHaitamKsiks/projet-cloud-iaas#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "nodemon": "^2.0.20",
+    "uuid": "^9.0.0"
+  }
+}

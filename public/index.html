@@ -1,0 +1,109 @@
+<html>
+
+    <!--html-->
+    <head>
+        <title> Galerie de photos </title>
+        <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Play" />
+        <!--css-->
+        <link rel="stylesheet" href="style.css" />
+    </head>
+
+    <body>
+        <div class="galery-container">
+            <h1> Galerie de photos</h1>
+
+            <h2> Importer une photo </h2>
+
+            <img id="tmp-image" src="placeholder.svg" class="galery-import-image"/>
+
+            <div class="galery-buttons">
+                <input id="upload-button" class="galery-file-button" type="file" name="image"  accept="image/png, image/jpeg"/>
+                <button id="confirm-button" class="galery-upload-button">Upload</button>
+            </div>
+
+            <h2> Vos photos </h2>
+
+            <div class="galery-images" id="images"></div>
+        </div>
+    </body>
+
+    <!--javascript-->
+    <script>
+        //image component
+        const imageComponent = (imageUrl) => {
+            return `<img src="${ imageUrl }" class="galery-image"/>`;
+        }
+
+        // elements
+        //image list elemt
+        const imagesElement = document.getElementById('images');
+        // upload button
+        const uploadButton = document.getElementById("upload-button");
+        // confirm button
+        const confirmButton = document.getElementById("confirm-button");
+        //tmp image
+        const tmpImage = document.getElementById("tmp-image");
+
+        //images list
+        const getAllImages = ()=> {
+            let images = [];
+            //get images 
+            axios.get('/api/images')
+            .then((res) => {
+                console.log(res.data);
+                images = res.data;
+                
+                //fill images
+                imagesElement.innerHTML = "";
+                images.forEach(image => {
+                    const imageUrl = `/api${ image }`;
+                    console.log(imageComponent(imageUrl));
+                    imagesElement.innerHTML += imageComponent(imageUrl);
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+            
+        };
+        //get all images on load
+        getAllImages();
+        
+        //current image path
+        let currentImage;
+        
+        //upload photo
+        const uploadImage = () => {
+            let formData = new FormData();
+            formData.append("image", uploadButton.files[0]);
+            //upload data
+            axios.post('/api/upload', formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            })
+            .then( (response) => {
+                currentImage = response.data;
+                tmpImage.setAttribute('src', `/api/tmp/${ currentImage }`);
+            });
+        };
+        uploadButton.addEventListener("change", uploadImage);
+        
+        //confirm upload
+        const confirmUpload = () => {
+            if (!currentImage)
+                return
+            
+            axios.post('/api/confirm', {image: currentImage})
+            .then( res => {
+                currentImage = undefined;
+                tmpImage.setAttribute('src', 'placeholder.svg');
+                getAllImages();
+            });  
+        };
+        confirmButton.addEventListener("click", confirmUpload);
+        
+    </script>
+
+</html>
